@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: transformers-play
+    runtime: python
+    plan: free
+    buildCommand: ""
+    startCommand: python server.py

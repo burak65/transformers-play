@@ -1,0 +1,16 @@
+Bu klasore su dosya adlariyla ses dosyalarini koy:
+
+ui_click.wav
+ion_blaster.wav
+auto_scan_rifle.wav
+star_saber.wav
+ion_bomb.wav
+shellstorm.wav
+transform.wav
+pickup.wav
+hit.wav
+kill.wav
+hurt.wav
+matrix_beam.wav
+matrix_revive.wav
+engine_loop.wav

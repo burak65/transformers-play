@@ -1,0 +1,19 @@
+{
+  "site_name": "Transformers Play",
+  "site_description": "Transformers Play, Bayverse inspired 2D web combat deneyimi. Optimus Prime, Megatron, Bumblebee ve daha fazlasi ile tarayicida savasa gir.",
+  "site_url": "http://127.0.0.1:8000",
+  "google_site_verification": "",
+  "version": "0.6.0",
+  "maintenance": false,
+  "maintenance_message": "",
+  "update_notes": [
+    "SEO ve yayin altyapisi icin robots.txt ve sitemap.xml endpointleri eklendi.",
+    "Dinamik canonical, og:url ve Google verification meta destegi eklendi.",
+    "Render ucretsiz yayin akisi icin deploy ayarlari hazirlandi.",
+    "Earth savas haritalari genisletildi.",
+    "Tum temel karakterler oynanabilir hale getirildi.",
+    "Yerel ag online presence ve update bildirimi eklendi.",
+    "Lane sistemi, yikilabilir cover ve gorsel stil modlari gelistirildi."
+  ],
+  "shared_map": "iacon_heights"
+}

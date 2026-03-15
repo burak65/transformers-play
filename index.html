@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>__SITE_NAME__</title>
+  <meta name="application-name" content="__SITE_NAME__">
+  <meta name="apple-mobile-web-app-title" content="__SITE_NAME__">
+  <meta name="theme-color" content="#050913">
+  <meta name="description" content="__SITE_DESCRIPTION__">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <meta name="googlebot" content="index,follow">
+  <meta name="google-site-verification" content="__GOOGLE_SITE_VERIFICATION__">
+  <link rel="canonical" href="__SITE_URL__/">
+  <meta property="og:title" content="__SITE_NAME__">
+  <meta property="og:description" content="__SITE_DESCRIPTION__">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="__SITE_URL__/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23050913'/%3E%3Cpath d='M20 14h24l-3 10 3 5-5 21H25l-5-21 3-5-3-10z' fill='%236cd1ff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="global-banner" id="globalBanner">Verileriniz kaydedildi, daha sonra tekrar oynayabilirsiniz.</div>
+
+  <header class="topbar">
+    <div class="brand-block">
+      <div class="brand-mark">TP</div>
+      <div>
+        <strong>Transformers Play</strong>
+        <span>Bayverse inspired 2D web combat</span>
+      </div>
+    </div>
+
+    <div class="topbar-stats">
+      <article>
+        <span>Katilan uye</span>
+        <strong data-stat="joined">1248</strong>
+      </article>
+      <article>
+        <span>Aktif oyuncu</span>
+        <strong data-stat="active">118</strong>
+      </article>
+      <article>
+        <span>Gunluk gorev</span>
+        <strong id="dailyMissionBadge">Energon Run</strong>
+      </article>
+    </div>
+
+    <button id="soundToggleButton" class="ghost-button" type="button">Ses: Acik</button>
+  </header>
+
+  <main class="app-shell">
+    <section class="screen active" id="menuScreen">
+      <div class="hero-grid">
+        <section class="hero-panel">
+          <div class="hero-slides" aria-hidden="true">
+            <div class="hero-slide hero-slide-a" id="heroSlideA"></div>
+            <div class="hero-slide hero-slide-b" id="heroSlideB"></div>
+          </div>
+          <p class="eyebrow">Cybertron Frontline Protocol</p>
+          <h1>Transformers Play</h1>
+          <p class="hero-copy">
+            Tarayicidan acilan, savasa hizla sokan, buyumeye hazir bir 2D Transformers combat experience.
+            Bayverse sertligi, War for Cybertron ruhu ve modern web oyun akisi tek prototipte bulusuyor.
+          </p>
+
+          <div class="hero-actions">
+            <button id="playButton" class="primary-button" type="button">Play</button>
+            <button id="continueButton" class="ghost-button" type="button">Continue</button>
+          </div>
+
+          <div class="menu-grid">
+            <button class="menu-card" data-nav="profile" type="button">
+              <strong>Profile</strong>
+              <span>Takim, isim, ilerleme ve kayit durumu</span>
+            </button>
+            <button class="menu-card" data-nav="command" type="button">
+              <strong>Characters</strong>
+              <span>Optimus aktif, digerleri acilmaya hazir</span>
+            </button>
+            <button class="menu-card" data-nav="lore" type="button">
+              <strong>Lore</strong>
+              <span>Cybertron savasinin hikaye dokusu</span>
+            </button>
+            <button class="menu-card" data-nav="updates" type="button">
+              <strong>Updates</strong>
+              <span>Yol haritasi, modlar ve gelisim notlari</span>
+            </button>
+            <button class="menu-card" data-nav="settings" type="button">
+              <strong>Settings</strong>
+              <span>Ses, kalite, mobil ve kontrol ayarlari</span>
+            </button>
+            <button class="menu-card" data-nav="command" type="button">
+              <strong>Play Terminal</strong>
+              <span>Takim sec, karakter sec, harita sec ve giris yap</span>
+            </button>
+          </div>
+        </section>
+
+        <aside class="spotlight-panel">
+          <div class="spotlight-ring ring-a"></div>
+          <div class="spotlight-ring ring-b"></div>
+          <div class="spotlight-card">
+            <p class="eyebrow">Feature Stack</p>
+            <h2>Living Web Combat Prototype</h2>
+            <ul class="feature-list">
+              <li>10 buyuk Earth savas haritasi ve moduler level data</li>
+              <li>Optimus, Bumblebee, Megatron ve Starscream prototip kadrosu</li>
+              <li>5 silah, Matrix gucu, lane shift ve melee sistemi</li>
+              <li>Profil kaydi, continue ve topluluk temeli</li>
+              <li>Mobil kontrol altyapisi, kalite modu ve style versiyonu</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="screen" id="loadingScreen">
+      <div class="loading-panel">
+        <p class="eyebrow">Systems Online</p>
+        <h2>Prime battleframe yukleniyor</h2>
+        <div class="loading-track">
+          <div class="loading-fill" id="loadingFill"></div>
+        </div>
+        <strong id="loadingValue">0%</strong>
+        <p id="loadingHint">Cybertron veri katmanlari aciliyor...</p>
+      </div>
+    </section>
+
+    <section class="screen" id="commandScreen">
+      <div class="command-grid">
+        <section class="command-column">
+          <div class="panel">
+            <p class="eyebrow">Faction Select</p>
+            <h2>Takimini sec</h2>
+            <div class="faction-grid" id="factionGrid"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Characters</p>
+                <h3>Karakter listesi</h3>
+              </div>
+              <span id="characterStatus">1 aktif pilot</span>
+            </div>
+            <div class="card-grid" id="characterList"></div>
+          </div>
+        </section>
+
+        <section class="command-column">
+          <div class="panel">
+            <p class="eyebrow">Pilot Data</p>
+            <h2>Profilini kur</h2>
+            <label class="field">
+              <span>Takma isim</span>
+              <input id="nicknameInput" type="text" maxlength="18" placeholder="Ornek: PrimeHunter">
+            </label>
+
+            <div class="invite-box">
+              <div>
+                <span class="invite-label">Davet kodu</span>
+                <strong id="inviteCode">PRIME-001</strong>
+              </div>
+              <button id="copyInviteButton" class="ghost-button" type="button">Kopyala</button>
+            </div>
+
+            <div class="profile-summary">
+              <article>
+                <span>Skor</span>
+                <strong id="profileScore">0</strong>
+              </article>
+              <article>
+                <span>Zafer</span>
+                <strong id="profileWins">0</strong>
+              </article>
+              <article>
+                <span>Energon</span>
+                <strong id="profileEnergon">0</strong>
+              </article>
+              <article>
+                <span>Kill</span>
+                <strong id="profileKills">0</strong>
+              </article>
+            </div>
+
+            <div class="save-card">
+              <span>Kayit durumu</span>
+              <strong id="saveStatus">Yeni profil hazir</strong>
+              <p id="saveMeta">Kayitlar localStorage ile korunur ve continue akisi icin kullanilir.</p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Maps</p>
+                <h3>Harita secimi</h3>
+              </div>
+              <span id="mapStatus">10 operasyon hazir</span>
+            </div>
+            <div class="card-grid" id="mapList"></div>
+          </div>
+
+          <div class="panel">
+            <p class="eyebrow">Mission Brief</p>
+            <div class="brief-box" id="briefingStory">
+              Optimus Prime, Cybertron ve dunya cephesinin arasinda kalan savas koridoruna indiriliyor.
+            </div>
+            <button id="enterBattleButton" class="primary-button wide" type="button">Oyuna Gir</button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="screen" id="profileScreen">
+      <div class="single-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Pilot Card</p>
+            <h2>Profil ve ilerleme</h2>
+          </div>
+          <button class="ghost-button back-button" data-nav="menu" type="button">Menuye Don</button>
+        </div>
+        <div class="profile-detail-grid" id="profileDetailGrid"></div>
+      </div>
+    </section>
+
+    <section class="screen" id="loreScreen">
+      <div class="single-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Lore Archive</p>
+            <h2>Evren arsivi</h2>
+          </div>
+          <button class="ghost-button back-button" data-nav="menu" type="button">Menuye Don</button>
+        </div>
+        <div class="archive-grid" id="loreList"></div>
+      </div>
+    </section>
+
+    <section class="screen" id="updatesScreen">
+      <div class="single-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Updates</p>
+            <h2>Gelisim yol haritasi</h2>
+          </div>
+          <button class="ghost-button back-button" data-nav="menu" type="button">Menuye Don</button>
+        </div>
+        <div class="archive-grid" id="updatesList"></div>
+      </div>
+    </section>
+
+    <section class="screen" id="settingsScreen">
+      <div class="single-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Settings</p>
+            <h2>Sistem ayarlari</h2>
+          </div>
+          <button class="ghost-button back-button" data-nav="menu" type="button">Menuye Don</button>
+        </div>
+
+        <div class="settings-grid">
+          <div class="panel mini-panel">
+            <p class="eyebrow">Graphics</p>
+            <h3>Kalite profili</h3>
+            <div class="button-row">
+              <button id="qualityHighButton" class="ghost-button" type="button">High</button>
+              <button id="qualityLowButton" class="ghost-button" type="button">Low</button>
+            </div>
+          </div>
+
+          <div class="panel mini-panel">
+            <p class="eyebrow">Visual Style</p>
+            <h3>Oyun versiyonu</h3>
+            <div class="button-row">
+              <button id="styleCinematicButton" class="ghost-button" type="button">Cinematic</button>
+              <button id="styleStylizedButton" class="ghost-button" type="button">Stylized</button>
+            </div>
+            <p class="mini-copy">Ayni oynanis, farkli sahne ve karakter sunum dili.</p>
+          </div>
+
+          <div class="panel mini-panel">
+            <p class="eyebrow">Mobile</p>
+            <h3>Mobil yardim</h3>
+            <div class="button-row">
+              <button id="mobileControlsButton" class="ghost-button" type="button">Mobil Kontroller</button>
+            </div>
+            <p class="mini-copy">Kucuk ekranda sanal butonlar acilip kapanabilir.</p>
+          </div>
+
+          <div class="panel mini-panel">
+            <p class="eyebrow">Audio</p>
+            <h3>Ses profili</h3>
+            <div class="button-row">
+              <button id="audioSynthButton" class="ghost-button" type="button">Synth</button>
+              <button id="audioAssetButton" class="ghost-button" type="button">Asset</button>
+            </div>
+          </div>
+
+          <div class="panel mini-panel">
+            <p class="eyebrow">Controls</p>
+            <h3>Egitim modu</h3>
+            <div class="button-row">
+              <button id="tutorialButton" class="ghost-button" type="button">Tutorial Ac/Kapat</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="gameScreen">
+      <div class="game-layout">
+        <section class="game-stage">
+          <div class="hud-row top">
+            <article><span>Oyuncu</span><strong id="hudNickname">PrimeHunter</strong></article>
+            <article><span>Takim</span><strong id="hudFaction">Autobot</strong></article>
+            <article><span>Karakter</span><strong id="hudCharacter">Optimus Prime</strong></article>
+            <article><span>Harita</span><strong id="hudMapName">Iacon Heights</strong></article>
+            <article><span>Silah</span><strong id="hudWeapon">Energon Pistol</strong></article>
+            <article><span>Form</span><strong id="hudForm">Robot</strong></article>
+          </div>
+
+          <div class="hud-row middle">
+            <div class="bar-card">
+              <span>Can</span>
+              <div class="bar-track"><div class="bar-fill health" id="healthFill"></div></div>
+              <strong id="healthValue">100 / 100</strong>
+            </div>
+            <article class="mini-card"><span>Energon</span><strong id="energonValue">0</strong></article>
+            <article class="mini-card"><span>Matrix</span><strong id="matrixValue">100</strong></article>
+            <article class="mini-card"><span>Skor</span><strong id="scoreValue">0</strong></article>
+            <article class="mini-card"><span>Kills</span><strong id="killsValue">0</strong></article>
+          </div>
+
+          <div class="canvas-shell">
+            <canvas id="gameCanvas" width="1280" height="720" aria-label="Transformers Play savas alani"></canvas>
+            <div class="status-overlay" id="statusOverlay">Hazir</div>
+            <div class="cross-overlay" id="crossOverlay">X HIT</div>
+            <div class="toast-overlay" id="saveToast">Verileriniz kaydedildi, daha sonra tekrar oynayabilirsiniz.</div>
+
+            <div class="mobile-controls" id="mobileControls">
+              <div class="mobile-pad">
+                <button data-mobile="left" type="button">A</button>
+                <button data-mobile="jump" type="button">W</button>
+                <button data-mobile="down" type="button">S</button>
+                <button data-mobile="right" type="button">D</button>
+              </div>
+              <div class="mobile-actions">
+                <button data-mobile="fire" type="button">Fire</button>
+                <button data-mobile="transform" type="button">T</button>
+                <button data-mobile="weapon" type="button">Tab</button>
+                <button data-mobile="matrix" type="button">Q/M</button>
+                <button data-mobile="melee" type="button">Melee</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="game-side">
+          <section class="panel">
+            <p class="eyebrow">Objective</p>
+            <h3 id="objectiveTitle">Iacon Heights</h3>
+            <p id="objectiveText">Dusmanlari temizle, energon topla ve cikis noktasina ulas.</p>
+          </section>
+
+          <section class="panel">
+            <p class="eyebrow">Combat Log</p>
+            <ul class="combat-log" id="logList"></ul>
+          </section>
+
+          <section class="panel">
+            <p class="eyebrow">Team Chat</p>
+            <div class="chat-panel">
+              <div class="chat-messages" id="chatMessages"></div>
+              <div class="chat-compose">
+                <input id="chatInput" type="text" maxlength="240" placeholder="Takimina mesaj yaz...">
+                <button id="chatSendButton" class="ghost-button" type="button">Gonder</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <p class="eyebrow">Quick Guide</p>
+            <ul class="control-list">
+              <li><strong>W A S D / Space</strong> hareket ve zipla</li>
+              <li><strong>J</strong> tirman / etkilesim</li>
+              <li><strong>T</strong> truck donusum</li>
+              <li><strong>Tab</strong> silah degistir</li>
+              <li><strong>R / F</strong> on / arka lane gecisi</li>
+              <li><strong>L</strong> takla / hizli dash</li>
+              <li><strong>Mouse</strong> nisangah ve ates</li>
+              <li><strong>Y / O / P</strong> melee varyasyonlari</li>
+              <li><strong>Q / M / K / Esc</strong> Matrix, skill, heal, pause</li>
+            </ul>
+          </section>
+
+          <section class="panel hidden" id="resultPanel">
+            <p class="eyebrow">Mission Status</p>
+            <h3 id="resultTitle">Mission Complete</h3>
+            <p id="resultText">Bir sonraki goreve hazirsin.</p>
+            <div class="button-row">
+              <button id="resultContinueButton" class="primary-button" type="button">Devam Et</button>
+              <button id="resultMenuButton" class="ghost-button" type="button">Menu</button>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal hidden" id="pauseModal">
+    <div class="modal-card">
+      <p class="eyebrow">Pause</p>
+      <h2>Battle Controls</h2>
+      <p class="modal-copy">Verilerin kaydedilir. Buradan oyuna devam edebilir ya da menuye donebilirsin.</p>
+      <div class="button-row">
+        <button id="resumeButton" class="ghost-button" type="button">Devam Et</button>
+        <button id="pauseSettingsButton" class="ghost-button" type="button">Settings</button>
+        <button id="saveQuitButton" class="primary-button" type="button">Quit</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/characters/optimus_prime_bayverse/config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "characterId": "optimus_prime_bayverse",
+  "vehicleForm": "peterbilt_truck_flame",
+  "robotForm": "bayverse_optimus_prime",
+  "transitionFrames": [
+    {
+      "frame": 0,
+      "spriteKey": "robot_idle",
+      "effect": "panel_unlock"
+    },
+    {
+      "frame": 1,
+      "spriteKey": "robot_attack",
+      "effect": "shoulder_rotate"
+    },
+    {
+      "frame": 2,
+      "spriteKey": "truck_idle",
+      "effect": "spark_burst"
+    }
+  ],
+  "timing": {
+    "durationMs": 700,
+    "lockInputMs": 320
+  }
+}
