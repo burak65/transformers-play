@@ -351,23 +351,27 @@
               <button class="ghost-button" id="mobilePauseButton" type="button">Pause</button>
             </div>
 
-            <div class="mobile-controls" id="mobileControls">
-              <div class="mobile-joystick" id="mobileJoystick" aria-label="Hareket joysticki">
-                <div class="mobile-joystick-ring"></div>
-                <div class="mobile-joystick-knob" id="mobileJoystickKnob"></div>
+              <div class="mobile-controls" id="mobileControls">
+                <div class="mobile-joystick" id="mobileJoystick" aria-label="Hareket joysticki">
+                  <div class="mobile-joystick-ring"></div>
+                  <div class="mobile-joystick-knob" id="mobileJoystickKnob"></div>
+                </div>
+                <div class="mobile-actions">
+                  <button data-mobile="jump" type="button">JMP</button>
+                  <button data-mobile="fire" type="button">FIR</button>
+                  <button data-mobile="transform" type="button">TR</button>
+                  <button data-mobile="weapon" type="button">WP</button>
+                  <button data-mobile="laneBack" type="button">F-</button>
+                  <button data-mobile="laneFront" type="button">R+</button>
+                  <button data-mobile="matrix" type="button">MX</button>
+                  <button data-mobile="melee" type="button">ME</button>
+                </div>
+                <button class="mobile-fullscreen-fab" id="mobileFullscreenButton" type="button" aria-label="Tam ekran">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M14 5h5v5M19 5l-6 6M10 19H5v-5M5 19l6-6" />
+                  </svg>
+                </button>
               </div>
-              <div class="mobile-actions">
-                <button data-mobile="jump" type="button">JMP</button>
-                <button data-mobile="fire" type="button">FIR</button>
-                <button data-mobile="transform" type="button">TR</button>
-                <button data-mobile="weapon" type="button">WP</button>
-                <button data-mobile="laneBack" type="button">F-</button>
-                <button data-mobile="laneFront" type="button">R+</button>
-                <button data-mobile="matrix" type="button">MX</button>
-                <button data-mobile="melee" type="button">ME</button>
-                <button id="mobileFullscreenButton" type="button">[ ]</button>
-              </div>
-            </div>
           </div>
         </section>
 

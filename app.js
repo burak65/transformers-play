@@ -1039,6 +1039,7 @@ function bindPointer() {
 }
 
 function bindMobile() {
+  if (!dom.mobileJoystick || !dom.mobileJoystickKnob) return;
   const actions = {
     jump: { just: "jump" },
     fire: { hold: "fire" },
@@ -1092,23 +1093,20 @@ function bindMobile() {
     event.preventDefault();
     unlockAudio();
     state.ui.joystickPointerId = event.pointerId;
+    dom.mobileJoystick.setPointerCapture?.(event.pointerId);
     moveJoystick(event.clientX, event.clientY);
   });
-  dom.mobileJoystick.addEventListener("pointermove", (event) => {
+  addEventListener("pointermove", (event) => {
     if (state.ui.joystickPointerId !== event.pointerId) return;
     event.preventDefault();
     moveJoystick(event.clientX, event.clientY);
-  });
+  }, { passive: false });
   ["pointerup", "pointercancel", "pointerleave"].forEach((eventName) => {
-    dom.mobileJoystick.addEventListener(eventName, (event) => {
+    addEventListener(eventName, (event) => {
       if (state.ui.joystickPointerId !== null && state.ui.joystickPointerId !== event.pointerId) return;
+      dom.mobileJoystick.releasePointerCapture?.(event.pointerId);
       resetJoystick();
-    });
-  });
-  ["pointerup", "pointercancel"].forEach((eventName) => {
-    addEventListener(eventName, () => {
-      if (state.ui.joystickPointerId !== null) resetJoystick();
-    });
+    }, { passive: true });
   });
   dom.mobileFullscreenButton.addEventListener("click", async () => {
     try {

@@ -1011,6 +1011,9 @@ body[data-style-mode="stylized"] #gameCanvas {
   justify-content: space-between;
   align-items: end;
   gap: 16px;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .mobile-joystick,
@@ -1021,22 +1024,52 @@ body[data-style-mode="stylized"] #gameCanvas {
 
 .mobile-joystick {
   position: relative;
-  width: 142px;
-  height: 142px;
+  width: 112px;
+  height: 112px;
   place-items: center;
+  touch-action: none;
 }
 
 .mobile-actions {
-  grid-template-columns: repeat(3, minmax(72px, 90px));
+  grid-template-columns: repeat(3, minmax(60px, 76px));
 }
 
 .mobile-controls button {
-  min-height: 56px;
+  min-height: 48px;
   border: 0;
   border-radius: 18px;
   background: rgba(8, 16, 28, 0.8);
   color: var(--text);
   border: 1px solid rgba(255, 255, 255, 0.12);
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.mobile-fullscreen-fab {
+  position: absolute;
+  right: 2px;
+  bottom: 116px;
+  width: 48px;
+  min-height: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(8, 16, 28, 0.88);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  z-index: 3;
+}
+
+.mobile-fullscreen-fab svg {
+  width: 22px;
+  height: 22px;
+  stroke: #f4f7ff;
+  stroke-width: 2.2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .mobile-joystick-ring,
@@ -1058,8 +1091,8 @@ body[data-style-mode="stylized"] #gameCanvas {
 .mobile-joystick-knob {
   left: 50%;
   top: 50%;
-  width: 56px;
-  height: 56px;
+  width: 42px;
+  height: 42px;
   transform: translate(-50%, -50%);
   background: linear-gradient(180deg, rgba(156, 213, 255, 0.96), rgba(79, 126, 214, 0.9));
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
@@ -1138,6 +1171,8 @@ body[data-style-mode="stylized"] #gameCanvas {
 
   .mobile-controls {
     display: flex;
+    inset: auto 10px 10px 10px;
+    gap: 10px;
   }
 
   .mobile-hud-bar {
@@ -1240,16 +1275,32 @@ body[data-style-mode="stylized"] #gameCanvas {
   }
 
   body[data-device-mode="mobile"] .mobile-actions {
-    grid-template-columns: repeat(3, minmax(72px, 92px));
+    grid-template-columns: repeat(3, minmax(58px, 72px));
   }
 
   body[data-device-mode="mobile"] .mobile-joystick {
-    width: 154px;
-    height: 154px;
+    width: 104px;
+    height: 104px;
   }
 
   body[data-device-mode="mobile"] .mobile-controls button {
-    min-height: 62px;
+    min-height: 46px;
     background: rgba(8, 16, 28, 0.74);
+    font-size: 0.88rem;
+    padding: 0.4rem 0.5rem;
+  }
+
+  body[data-device-mode="mobile"] .mobile-fullscreen-fab {
+    right: 0;
+    bottom: 110px;
+    width: 46px;
+    min-height: 46px;
+    height: 46px;
+    padding: 0;
+  }
+
+  body[data-device-mode="mobile"] .mobile-joystick-knob {
+    width: 38px;
+    height: 38px;
   }
 }
