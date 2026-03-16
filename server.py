@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import html
 import json
+import os
 import socket
 import time
 from http import HTTPStatus
@@ -12,7 +13,7 @@ from urllib.parse import parse_qs, urlparse
 
 
 HOST = "0.0.0.0"
-PORT = 8000
+PORT = int(os.getenv("PORT", "8000"))
 BASE_DIR = Path(__file__).resolve().parent
 SITE_STATE_FILE = BASE_DIR / "site_state.json"
 PLAYER_TTL_SECONDS = 12
