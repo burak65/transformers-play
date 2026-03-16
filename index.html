@@ -344,27 +344,33 @@
             <div class="status-overlay" id="statusOverlay">Hazir</div>
             <div class="cross-overlay" id="crossOverlay">X HIT</div>
             <div class="toast-overlay" id="saveToast">Verileriniz kaydedildi, daha sonra tekrar oynayabilirsiniz.</div>
+            <div class="mobile-hud-bar" id="mobileHudBar">
+              <button class="ghost-button" data-mobile-panel="objective" type="button">Gorev</button>
+              <button class="ghost-button" data-mobile-panel="chat" type="button">Chat</button>
+              <button class="ghost-button" data-mobile-panel="guide" type="button">Yardim</button>
+              <button class="ghost-button" id="mobilePauseButton" type="button">Pause</button>
+            </div>
 
             <div class="mobile-controls" id="mobileControls">
               <div class="mobile-pad">
-                <button data-mobile="left" type="button">A</button>
-                <button data-mobile="jump" type="button">W</button>
-                <button data-mobile="down" type="button">S</button>
-                <button data-mobile="right" type="button">D</button>
+                <button data-mobile="left" type="button">Sol</button>
+                <button data-mobile="jump" type="button">Zipla</button>
+                <button data-mobile="down" type="button">Asagi</button>
+                <button data-mobile="right" type="button">Sag</button>
               </div>
               <div class="mobile-actions">
                 <button data-mobile="fire" type="button">Fire</button>
-                <button data-mobile="transform" type="button">T</button>
-                <button data-mobile="weapon" type="button">Tab</button>
-                <button data-mobile="matrix" type="button">Q/M</button>
+                <button data-mobile="transform" type="button">Shift</button>
+                <button data-mobile="weapon" type="button">Silah</button>
+                <button data-mobile="matrix" type="button">Matrix</button>
                 <button data-mobile="melee" type="button">Melee</button>
               </div>
             </div>
           </div>
         </section>
 
-        <aside class="game-side">
-          <section class="panel">
+        <aside class="game-side" id="gameSide">
+          <section class="panel" id="objectivePanel">
             <p class="eyebrow">Objective</p>
             <h3 id="objectiveTitle">Iacon Heights</h3>
             <p id="objectiveText">Dusmanlari temizle, energon topla ve cikis noktasina ulas.</p>
@@ -375,7 +381,7 @@
             <ul class="combat-log" id="logList"></ul>
           </section>
 
-          <section class="panel">
+          <section class="panel" id="chatPanelSection">
             <p class="eyebrow">Team Chat</p>
             <div class="chat-panel">
               <div class="chat-messages" id="chatMessages"></div>
@@ -386,7 +392,7 @@
             </div>
           </section>
 
-          <section class="panel">
+          <section class="panel" id="guidePanel">
             <p class="eyebrow">Quick Guide</p>
             <ul class="control-list">
               <li><strong>W A S D / Space</strong> hareket ve zipla</li>
@@ -405,8 +411,10 @@
             <p class="eyebrow">Mission Status</p>
             <h3 id="resultTitle">Mission Complete</h3>
             <p id="resultText">Bir sonraki goreve hazirsin.</p>
+            <div class="result-reward-grid" id="resultRewardGrid"></div>
             <div class="button-row">
               <button id="resultContinueButton" class="primary-button" type="button">Devam Et</button>
+              <button id="resultRetryButton" class="ghost-button" type="button">Tekrar Oyna</button>
               <button id="resultMenuButton" class="ghost-button" type="button">Menu</button>
             </div>
           </section>

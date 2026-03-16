@@ -764,6 +764,16 @@ input {
   border-radius: 30px;
 }
 
+.game-stage {
+  min-width: 0;
+}
+
+.game-side {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+}
+
 #gameCanvas {
   display: block;
   width: 100%;
@@ -817,6 +827,21 @@ body[data-style-mode="stylized"] #gameCanvas {
   border-radius: 999px;
   background: rgba(127, 255, 159, 0.92);
   color: #071019;
+}
+
+.mobile-hud-bar {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  z-index: 4;
+  display: none;
+  gap: 10px;
+}
+
+.mobile-hud-bar .ghost-button {
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  backdrop-filter: blur(10px);
 }
 
 .combat-log,
@@ -935,6 +960,27 @@ body[data-style-mode="stylized"] #gameCanvas {
 .modal.hidden,
 .panel.hidden {
   display: none;
+}
+
+.result-reward-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0 20px;
+}
+
+.result-stat {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.result-stat strong {
+  display: block;
+  margin-top: 6px;
+  font-family: "Oxanium", sans-serif;
+  font-size: 1.08rem;
 }
 
 .modal {
@@ -1062,5 +1108,94 @@ body[data-style-mode="stylized"] #gameCanvas {
 
   .mobile-controls {
     display: flex;
+  }
+
+  .mobile-hud-bar {
+    display: flex;
+  }
+
+  .game-stage {
+    order: 1;
+  }
+
+  .game-side {
+    position: fixed;
+    right: 10px;
+    top: 86px;
+    width: min(92vw, 360px);
+    z-index: 24;
+    pointer-events: none;
+  }
+
+  .game-side .panel {
+    display: none;
+    pointer-events: auto;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  }
+
+  .game-side .panel.mobile-visible,
+  .game-side .panel.hidden.mobile-visible {
+    display: block;
+  }
+
+  #resultPanel {
+    display: block;
+    position: static;
+    pointer-events: auto;
+  }
+
+  .result-reward-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  body[data-device-mode="mobile"] .hud-row.top article:nth-child(2),
+  body[data-device-mode="mobile"] .hud-row.top article:nth-child(3),
+  body[data-device-mode="mobile"] .hud-row.top article:nth-child(4) {
+    display: none;
+  }
+
+  body[data-device-mode="mobile"] .hud-row.top {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  body[data-device-mode="mobile"] .hud-row.top,
+  body[data-device-mode="mobile"] .hud-row.middle {
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  body[data-device-mode="mobile"] .hud-row article,
+  body[data-device-mode="mobile"] .mini-card,
+  body[data-device-mode="mobile"] .bar-card {
+    padding: 10px 12px;
+    border-radius: 16px;
+  }
+
+  body[data-device-mode="mobile"] .canvas-shell {
+    padding: 8px;
+    border-radius: 24px;
+  }
+
+  body[data-device-mode="mobile"] .chat-messages {
+    min-height: 140px;
+    max-height: 220px;
+  }
+
+  body[data-device-mode="mobile"] .control-list {
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  body[data-device-mode="mobile"] .mobile-actions {
+    grid-template-columns: repeat(2, 84px);
+  }
+
+  body[data-device-mode="mobile"] .mobile-pad {
+    grid-template-columns: repeat(2, 78px);
+  }
+
+  body[data-device-mode="mobile"] .mobile-controls button {
+    min-height: 62px;
+    background: rgba(8, 16, 28, 0.74);
   }
 }

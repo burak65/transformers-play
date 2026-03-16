@@ -71,7 +71,9 @@ const dom = {
   resultPanel: document.getElementById("resultPanel"),
   resultTitle: document.getElementById("resultTitle"),
   resultText: document.getElementById("resultText"),
+  resultRewardGrid: document.getElementById("resultRewardGrid"),
   resultContinueButton: document.getElementById("resultContinueButton"),
+  resultRetryButton: document.getElementById("resultRetryButton"),
   resultMenuButton: document.getElementById("resultMenuButton"),
   pauseModal: document.getElementById("pauseModal"),
   resumeButton: document.getElementById("resumeButton"),
@@ -79,6 +81,13 @@ const dom = {
   saveQuitButton: document.getElementById("saveQuitButton"),
   heroSlideA: document.getElementById("heroSlideA"),
   heroSlideB: document.getElementById("heroSlideB"),
+  gameSide: document.getElementById("gameSide"),
+  objectivePanel: document.getElementById("objectivePanel"),
+  chatPanelSection: document.getElementById("chatPanelSection"),
+  guidePanel: document.getElementById("guidePanel"),
+  mobileHudBar: document.getElementById("mobileHudBar"),
+  mobilePauseButton: document.getElementById("mobilePauseButton"),
+  mobilePanelButtons: document.querySelectorAll("[data-mobile-panel]"),
   mobileControls: document.getElementById("mobileControls"),
   mobileButtons: document.querySelectorAll("[data-mobile]"),
   canvas: document.getElementById("gameCanvas")
@@ -359,6 +368,10 @@ function emptyGame() {
   };
 }
 
+function detectDeviceMode() {
+  return window.matchMedia("(max-width: 820px), (pointer: coarse)").matches ? "mobile" : "desktop";
+}
+
 const state = {
   assetConfig: window.TransformersAssets?.characters?.optimusPrimeBayverse || null,
   assetImage: null,
@@ -372,10 +385,15 @@ const state = {
   selectedMap: MAPS[0].id,
   profile: loadProfile(),
   settings: loadSettings(),
+  deviceMode: detectDeviceMode(),
   community: { joined: 1248, active: 118 },
   input: { held: Object.create(null), just: Object.create(null), mouse: { x: 900, y: 300, down: false, inside: false } },
   logs: [],
   menuVisual: { index: 0, currentA: true, timer: null },
+  ui: {
+    mobilePanel: "",
+    unreadChat: 0
+  },
   network: {
     clientId: localStorage.getItem("transformers-play-client-id") || `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
     version: null,
@@ -414,6 +432,18 @@ function getChar() { return CHARACTERS.find((x) => x.id === state.selectedCharac
 function getMap() { return MAPS.find((x) => x.id === state.selectedMap) || MAPS[0]; }
 function getWeapon(id) { return WEAPONS.find((x) => x.id === id) || WEAPONS[0]; }
 function isTouchMode() { return state.settings.mobileControls || window.matchMedia("(max-width: 820px)").matches; }
+
+function setMobilePanel(panelName = "") {
+  state.ui.mobilePanel = state.deviceMode === "mobile" ? panelName : "";
+  const isChatOpen = state.ui.mobilePanel === "chat";
+  const isGuideOpen = state.ui.mobilePanel === "guide";
+  const isObjectiveOpen = state.ui.mobilePanel === "objective";
+  dom.gameSide?.classList.toggle("mobile-open", Boolean(state.ui.mobilePanel));
+  dom.chatPanelSection?.classList.toggle("mobile-visible", isChatOpen);
+  dom.guidePanel?.classList.toggle("mobile-visible", isGuideOpen);
+  dom.objectivePanel?.classList.toggle("mobile-visible", isObjectiveOpen);
+  dom.mobilePanelButtons.forEach((button) => button.classList.toggle("active", button.dataset.mobilePanel === panelName));
+}
 
 function saveSettings() { localStorage.setItem(STORAGE.settings, JSON.stringify(state.settings)); }
 function saveProfile(silent = false) {
@@ -457,11 +487,14 @@ function showScreen(name) {
 }
 
 function setTheme() {
+  state.deviceMode = detectDeviceMode();
   document.body.dataset.faction = state.selectedFaction;
   document.body.dataset.quality = state.settings.quality;
   document.body.dataset.styleMode = state.settings.styleMode;
+  document.body.dataset.deviceMode = state.deviceMode;
   document.documentElement.style.setProperty("--hero-poster", `url("${UI_ASSETS.heroPoster}")`);
   dom.mobileControls.style.display = isTouchMode() ? "flex" : "";
+  if (state.deviceMode !== "mobile") setMobilePanel("");
 }
 
 function syncTopbar() {
@@ -931,6 +964,10 @@ function bindMobile() {
     ["pointerdown", "touchstart"].forEach((ev) => button.addEventListener(ev, (e) => { e.preventDefault(); bind(true); }, { passive: false }));
     ["pointerup", "pointerleave", "pointercancel", "touchend"].forEach((ev) => button.addEventListener(ev, () => bind(false), { passive: true }));
   });
+  dom.mobilePanelButtons.forEach((button) => button.addEventListener("click", () => {
+    const nextPanel = state.ui.mobilePanel === button.dataset.mobilePanel ? "" : button.dataset.mobilePanel;
+    setMobilePanel(nextPanel);
+  }));
 }
 
 function playerTemplate() {
@@ -973,6 +1010,7 @@ function startMission() {
   state.network.remotePlayers = [];
   state.network.chatMessages = [];
   renderChatMessages();
+  setMobilePanel("");
   state.game.startedAt = performance.now();
   state.logs = [];
   dom.resultPanel.classList.add("hidden");
@@ -991,6 +1029,7 @@ function startMission() {
 function pauseGame(value) {
   if (!state.game.active) return;
   state.game.paused = typeof value === "boolean" ? value : !state.game.paused;
+  if (state.game.paused) setMobilePanel("");
   dom.pauseModal.classList.toggle("hidden", !state.game.paused);
 }
 
@@ -1004,7 +1043,14 @@ function spawnSlash(player, color) {
 }
 
 function currentAim(player) {
-  if (!state.input.mouse.inside || isTouchMode()) return player.facing === 1 ? 0 : Math.PI;
+  if (isTouchMode()) {
+    const target = state.game.enemies
+      .filter((enemy) => enemy.alive && Math.abs((enemy.lane || 0) - (player.lane || 0)) <= 1)
+      .sort((a, b) => dist(player.x, player.y, a.x, a.y) - dist(player.x, player.y, b.x, b.y))[0];
+    if (!target) return player.facing === 1 ? 0 : Math.PI;
+    return Math.atan2((target.y + target.h * 0.4) - (player.y + 42), (target.x + target.w / 2) - (player.x + player.w / 2));
+  }
+  if (!state.input.mouse.inside) return player.facing === 1 ? 0 : Math.PI;
   const mx = state.game.cameraX + state.input.mouse.x;
   return Math.atan2(state.input.mouse.y - (player.y + 42), mx - (player.x + player.w / 2));
 }
@@ -1419,6 +1465,26 @@ function updateHud() {
   dom.objectiveText.textContent = state.game.objectiveComplete ? "Dusmanlar temizlendi. Cikis kapisina ulas." : state.game.map.objective;
 }
 
+function renderMissionRewards(success, elapsed) {
+  if (!dom.resultRewardGrid || !state.game.player) return;
+  const p = state.game.player;
+  const nextIndex = (MAPS.findIndex((map) => map.id === state.selectedMap) + 1) % MAPS.length;
+  const nextMap = MAPS[nextIndex];
+  const cards = [
+    ["Harita", state.game.map.name],
+    ["Durum", success ? "Mission Complete" : "Mission Failed"],
+    ["Skor", String(p.score)],
+    ["Kill", String(p.kills)],
+    ["Energon", `+${p.collectedEnergon}`],
+    ["Toplam Energon", String(state.profile.totalEnergon)],
+    ["Matrix", `${Math.floor(p.matrix)} / ${p.maxMatrix}`],
+    ["HP", `${Math.ceil(p.health)} / ${p.maxHealth}`],
+    ["Sure", `${elapsed} sn`],
+    ["Sonraki Harita", nextMap.name]
+  ];
+  dom.resultRewardGrid.innerHTML = cards.map(([label, value]) => `<article class="result-stat"><span>${label}</span><strong>${value}</strong></article>`).join("");
+}
+
 function endMission(success) {
   if (state.game.result) return;
   state.game.result = true;
@@ -1443,6 +1509,7 @@ function endMission(success) {
   state.profile.level = 1 + Math.floor(state.profile.score / 600);
   state.profile.lastMap = state.selectedMap;
   saveProfile(true);
+  renderMissionRewards(success, elapsed);
   dom.resultPanel.classList.remove("hidden");
   flash(dom.statusOverlay, success ? "Objective Complete" : "Systems Critical", 1200);
 }
@@ -1726,18 +1793,26 @@ function drawParticles() {
 }
 
 function drawTutorial() {
-  if (!state.settings.tutorial || state.game.time > 11) return;
+  if (!state.settings.tutorial || state.game.time > (state.deviceMode === "mobile" ? 5.5 : 11)) return;
+  if (state.deviceMode === "mobile" && state.ui.mobilePanel) return;
   ctx.fillStyle = "rgba(5,9,19,0.78)";
-  ctx.fillRect(24, 24, 420, 98);
+  const width = state.deviceMode === "mobile" ? 300 : 420;
+  const height = state.deviceMode === "mobile" ? 88 : 98;
+  ctx.fillRect(24, 24, width, height);
   ctx.strokeStyle = "rgba(111,223,255,0.3)";
-  ctx.strokeRect(24, 24, 420, 98);
+  ctx.strokeRect(24, 24, width, height);
   ctx.fillStyle = "#f2f7fd";
   ctx.font = "700 20px Oxanium";
   ctx.fillText("Tutorial", 44, 56);
-  ctx.font = "16px Space Grotesk";
+  ctx.font = state.deviceMode === "mobile" ? "14px Space Grotesk" : "16px Space Grotesk";
   ctx.fillStyle = "#c7d4e4";
-  ctx.fillText("WASD ile hareket et, Mouse ile ates et, T ile donus.", 44, 84);
-  ctx.fillText("Tum dusmanlari temizleyince cikis kapisi acilir.", 44, 108);
+  if (state.deviceMode === "mobile") {
+    ctx.fillText("Sol pad ile hareket et, Fire ile ates et.", 44, 84);
+    ctx.fillText("Shift donusum, Gorev butonunda hedef acilir.", 44, 104);
+  } else {
+    ctx.fillText("WASD ile hareket et, Mouse ile ates et, T ile donus.", 44, 84);
+    ctx.fillText("Tum dusmanlari temizleyince cikis kapisi acilir.", 44, 108);
+  }
 }
 
 function drawPulse() {
@@ -1816,7 +1891,7 @@ function continueFlow() {
 }
 
 function bindUi() {
-  dom.playButton.addEventListener("click", () => { unlockAudio(); startLoading(() => { showScreen("command"); refreshCommand(); }); });
+  dom.playButton.addEventListener("click", () => { unlockAudio(); playFlow(); });
   dom.continueButton.addEventListener("click", continueFlow);
   dom.menuNavButtons.forEach((button) => button.addEventListener("click", () => {
     unlockAudio();
@@ -1836,6 +1911,7 @@ function bindUi() {
   });
   dom.copyInviteButton.addEventListener("click", async () => { unlockAudio(); try { await navigator.clipboard.writeText(dom.inviteCode.textContent); showBanner("Davet kodu kopyalandi."); } catch { showBanner("Kopyalama desteklenmedi."); } });
   dom.enterBattleButton.addEventListener("click", playFlow);
+  dom.mobilePauseButton.addEventListener("click", () => pauseGame(true));
   dom.soundToggleButton.addEventListener("click", () => { unlockAudio(); state.settings.soundEnabled = !state.settings.soundEnabled; saveSettings(); syncSettings(); if (state.settings.soundEnabled) playSound("ui"); });
   dom.qualityHighButton.addEventListener("click", () => { state.settings.quality = "high"; saveSettings(); syncSettings(); });
   dom.qualityLowButton.addEventListener("click", () => { state.settings.quality = "low"; saveSettings(); syncSettings(); });
@@ -1855,6 +1931,10 @@ function bindUi() {
     saveProfile(true);
     playFlow();
   });
+  dom.resultRetryButton.addEventListener("click", () => {
+    saveProfile(true);
+    playFlow();
+  });
   dom.resultMenuButton.addEventListener("click", () => { saveProfile(); state.game = emptyGame(); showScreen("menu"); });
 }
 
@@ -1866,6 +1946,11 @@ function initCommunity() {
 }
 
 function init() {
+  if (!localStorage.getItem(STORAGE.settings) && detectDeviceMode() === "mobile") {
+    state.settings.quality = "low";
+    state.settings.styleMode = "stylized";
+    state.settings.mobileControls = true;
+  }
   applyProfileSelections();
   if (!state.profile.inviteCode) state.profile.inviteCode = idCode(state.profile.nickname);
   fillInputs();
