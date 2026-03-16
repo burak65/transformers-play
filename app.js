@@ -927,10 +927,11 @@ function tone(steps) {
 function playSound(name) {
   if (!state.settings.soundEnabled) return;
   duckBackgroundMusic();
-  if (state.settings.audioProfile === "asset" && state.assetAudio[name]) {
+  if ((name === "transform" && state.assetAudio[name]) || (state.settings.audioProfile === "asset" && state.assetAudio[name])) {
     try {
       const audio = state.assetAudio[name].cloneNode();
-      audio.volume = 0.5;
+      audio.volume = name === "transform" ? 0.72 : 0.5;
+      audio.currentTime = 0;
       audio.play().catch(() => {});
       return;
     } catch {}
@@ -2102,6 +2103,10 @@ function init() {
     state.settings.quality = "low";
     state.settings.styleMode = "stylized";
     state.settings.mobileControls = true;
+    state.settings.audioProfile = "asset";
+  }
+  if (detectDeviceMode() === "mobile" && state.settings.audioProfile === "synth") {
+    state.settings.audioProfile = "asset";
   }
   applyProfileSelections();
   if (!state.profile.inviteCode) state.profile.inviteCode = idCode(state.profile.nickname);
