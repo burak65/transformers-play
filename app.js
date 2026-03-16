@@ -1109,13 +1109,13 @@ function bindMobile() {
     }, { passive: true });
   });
   dom.mobileFullscreenButton.addEventListener("click", async () => {
-    try {
-      const target = dom.screens.game;
-      if (!document.fullscreenElement) {
-        if (target.requestFullscreen) await target.requestFullscreen();
-      } else if (document.exitFullscreen) {
-        await document.exitFullscreen();
-      }
+      try {
+        const target = dom.canvas?.closest(".canvas-shell") || dom.canvas || dom.screens.game;
+        if (!document.fullscreenElement) {
+          if (target.requestFullscreen) await target.requestFullscreen();
+        } else if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        }
     } catch {}
   });
 }
