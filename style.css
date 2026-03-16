@@ -1013,18 +1013,21 @@ body[data-style-mode="stylized"] #gameCanvas {
   gap: 16px;
 }
 
-.mobile-pad,
+.mobile-joystick,
 .mobile-actions {
   display: grid;
   gap: 10px;
 }
 
-.mobile-pad {
-  grid-template-columns: repeat(2, 64px);
+.mobile-joystick {
+  position: relative;
+  width: 142px;
+  height: 142px;
+  place-items: center;
 }
 
 .mobile-actions {
-  grid-template-columns: repeat(3, 74px);
+  grid-template-columns: repeat(3, minmax(72px, 90px));
 }
 
 .mobile-controls button {
@@ -1034,6 +1037,33 @@ body[data-style-mode="stylized"] #gameCanvas {
   background: rgba(8, 16, 28, 0.8);
   color: var(--text);
   border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.mobile-joystick-ring,
+.mobile-joystick-knob {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.mobile-joystick-ring {
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(108, 209, 255, 0.22), transparent 45%),
+    radial-gradient(circle at 70% 70%, rgba(255, 202, 99, 0.14), transparent 40%),
+    rgba(8, 16, 28, 0.64);
+  box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.32);
+}
+
+.mobile-joystick-knob {
+  left: 50%;
+  top: 50%;
+  width: 56px;
+  height: 56px;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(180deg, rgba(156, 213, 255, 0.96), rgba(79, 126, 214, 0.9));
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.24);
 }
 
 @keyframes spin {
@@ -1140,13 +1170,15 @@ body[data-style-mode="stylized"] #gameCanvas {
 
   #resultPanel {
     position: fixed;
-    inset: 110px 16px auto 16px;
+    inset: 82px 16px 18px 16px;
     max-width: 420px;
     margin: 0 auto;
     left: 50%;
     transform: translateX(-50%);
     z-index: 28;
     pointer-events: auto;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
   }
 
   #resultPanel.hidden {
@@ -1208,11 +1240,12 @@ body[data-style-mode="stylized"] #gameCanvas {
   }
 
   body[data-device-mode="mobile"] .mobile-actions {
-    grid-template-columns: repeat(2, 84px);
+    grid-template-columns: repeat(3, minmax(72px, 92px));
   }
 
-  body[data-device-mode="mobile"] .mobile-pad {
-    grid-template-columns: repeat(2, 78px);
+  body[data-device-mode="mobile"] .mobile-joystick {
+    width: 154px;
+    height: 154px;
   }
 
   body[data-device-mode="mobile"] .mobile-controls button {

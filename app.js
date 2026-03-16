@@ -87,6 +87,9 @@ const dom = {
   guidePanel: document.getElementById("guidePanel"),
   mobileHudBar: document.getElementById("mobileHudBar"),
   mobilePauseButton: document.getElementById("mobilePauseButton"),
+  mobileJoystick: document.getElementById("mobileJoystick"),
+  mobileJoystickKnob: document.getElementById("mobileJoystickKnob"),
+  mobileFullscreenButton: document.getElementById("mobileFullscreenButton"),
   mobilePanelButtons: document.querySelectorAll("[data-mobile-panel]"),
   mobileControls: document.getElementById("mobileControls"),
   mobileButtons: document.querySelectorAll("[data-mobile]"),
@@ -137,6 +140,16 @@ const UI_ASSETS = {
     "assets/ui/backgrounds/bg15.avif"
   ]
 };
+const BGM_TRACKS = [
+  "assets/audio/music/arrival_to_earth.mp3",
+  "assets/audio/music/autobots_reunite.mp3",
+  "assets/audio/music/lockdown.mp3",
+  "assets/audio/music/new_divide.mp3",
+  "assets/audio/music/optimus_superhero.mp3",
+  "assets/audio/music/optimus_superhero_alt.mp3",
+  "assets/audio/music/its_our_fight.mp3",
+  "assets/audio/music/its_our_fight_alt.mp3"
+];
 const FACTIONS = [
   { id: "Autobot", icon: "AU", motto: "Hold the line", desc: "Liderlik ve savunma gucu.", iconClass: "autobot" },
   { id: "Decepticon", icon: "DE", motto: "Take the core", desc: "Baski ve hizli saldiri.", iconClass: "decepticon" },
@@ -379,6 +392,14 @@ const state = {
   audioCtx: null,
   audioGain: null,
   audioUnlocked: false,
+  bgm: {
+    tracks: [],
+    current: null,
+    index: -1,
+    targetVolume: 0.42,
+    duckVolume: 0.2,
+    duckTimer: null
+  },
   currentScreen: "menu",
   selectedFaction: "Autobot",
   selectedCharacter: "optimus_prime",
@@ -392,7 +413,8 @@ const state = {
   menuVisual: { index: 0, currentA: true, timer: null },
   ui: {
     mobilePanel: "",
-    unreadChat: 0
+    unreadChat: 0,
+    joystickPointerId: null
   },
   network: {
     clientId: localStorage.getItem("transformers-play-client-id") || `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
@@ -446,6 +468,56 @@ function setMobilePanel(panelName = "") {
 }
 
 function saveSettings() { localStorage.setItem(STORAGE.settings, JSON.stringify(state.settings)); }
+
+function syncBackgroundMusic() {
+  if (!state.bgm.tracks.length) return;
+  const active = state.settings.soundEnabled;
+  state.bgm.tracks.forEach((track) => {
+    track.volume = active ? state.bgm.targetVolume : 0;
+  });
+  if (!active) {
+    state.bgm.current?.pause();
+    return;
+  }
+  if (state.audioUnlocked && state.bgm.current?.paused) {
+    state.bgm.current.play().catch(() => {});
+  }
+}
+
+function duckBackgroundMusic() {
+  if (!state.bgm.current || !state.settings.soundEnabled) return;
+  state.bgm.current.volume = state.bgm.duckVolume;
+  clearTimeout(state.bgm.duckTimer);
+  state.bgm.duckTimer = setTimeout(() => {
+    if (state.bgm.current) state.bgm.current.volume = state.bgm.targetVolume;
+  }, 280);
+}
+
+function playNextBackgroundTrack() {
+  if (!state.bgm.tracks.length) return;
+  if (state.bgm.current) {
+    state.bgm.current.pause();
+    state.bgm.current.currentTime = 0;
+  }
+  state.bgm.index = (state.bgm.index + 1) % state.bgm.tracks.length;
+  state.bgm.current = state.bgm.tracks[state.bgm.index];
+  state.bgm.current.volume = state.settings.soundEnabled ? state.bgm.targetVolume : 0;
+  if (state.audioUnlocked && state.settings.soundEnabled) {
+    state.bgm.current.play().catch(() => {});
+  }
+}
+
+function ensureBackgroundMusic() {
+  if (!state.bgm.tracks.length || !state.settings.soundEnabled) return;
+  if (!state.bgm.current) {
+    playNextBackgroundTrack();
+    return;
+  }
+  if (state.audioUnlocked && state.bgm.current.paused) {
+    state.bgm.current.play().catch(() => {});
+  }
+}
+
 function saveProfile(silent = false) {
   state.profile.lastPlayedAt = new Date().toLocaleString("tr-TR");
   localStorage.setItem(STORAGE.profile, JSON.stringify(state.profile));
@@ -768,6 +840,7 @@ function syncSettings() {
   dom.tutorialButton.classList.toggle("active", state.settings.tutorial);
   dom.soundToggleButton.textContent = `Ses: ${state.settings.soundEnabled ? "Acik" : "Kapali"}`;
   setTheme();
+  syncBackgroundMusic();
 }
 
 function syncContinue() {
@@ -791,14 +864,22 @@ function refreshCommand() {
 }
 
 function unlockAudio() {
-  if (state.audioUnlocked) return;
+  if (state.audioUnlocked) {
+    ensureBackgroundMusic();
+    return;
+  }
   const Ctx = window.AudioContext || window.webkitAudioContext;
-  if (!Ctx) { state.audioUnlocked = true; return; }
+  if (!Ctx) {
+    state.audioUnlocked = true;
+    ensureBackgroundMusic();
+    return;
+  }
   state.audioCtx = new Ctx();
   state.audioGain = state.audioCtx.createGain();
   state.audioGain.gain.value = 0.16;
   state.audioGain.connect(state.audioCtx.destination);
   state.audioUnlocked = true;
+  ensureBackgroundMusic();
 }
 
 function loadAssets() {
@@ -814,6 +895,12 @@ function loadAssets() {
       state.assetAudio[key] = audio;
     });
   }
+  state.bgm.tracks = BGM_TRACKS.map((url) => {
+    const audio = new Audio(url);
+    audio.preload = "auto";
+    audio.addEventListener("ended", playNextBackgroundTrack);
+    return audio;
+  });
   [UI_ASSETS.heroPoster, ...UI_ASSETS.backgrounds, ...Object.values(UI_ASSETS.logos)].forEach((src) => {
     const img = new Image();
     img.src = src;
@@ -839,6 +926,7 @@ function tone(steps) {
 
 function playSound(name) {
   if (!state.settings.soundEnabled) return;
+  duckBackgroundMusic();
   if (state.settings.audioProfile === "asset" && state.assetAudio[name]) {
     try {
       const audio = state.assetAudio[name].cloneNode();
@@ -951,7 +1039,16 @@ function bindPointer() {
 }
 
 function bindMobile() {
-  const actions = { left: { hold: "left" }, right: { hold: "right" }, down: { hold: "down" }, jump: { just: "jump" }, fire: { hold: "fire" }, transform: { just: "transform" }, weapon: { just: "weapon" }, matrix: { just: "matrixTouch" }, melee: { just: "meleeTouch" } };
+  const actions = {
+    jump: { just: "jump" },
+    fire: { hold: "fire" },
+    transform: { just: "transform" },
+    weapon: { just: "weapon" },
+    matrix: { just: "matrixTouch" },
+    melee: { just: "meleeTouch" },
+    laneFront: { just: "laneFront" },
+    laneBack: { just: "laneBack" }
+  };
   dom.mobileButtons.forEach((button) => {
     const bind = (down) => {
       const config = actions[button.dataset.mobile];
@@ -968,6 +1065,61 @@ function bindMobile() {
     const nextPanel = state.ui.mobilePanel === button.dataset.mobilePanel ? "" : button.dataset.mobilePanel;
     setMobilePanel(nextPanel);
   }));
+  const resetJoystick = () => {
+    setAction("left", false, false);
+    setAction("right", false, false);
+    setAction("down", false, false);
+    state.ui.joystickPointerId = null;
+    if (dom.mobileJoystickKnob) dom.mobileJoystickKnob.style.transform = "translate(-50%, -50%)";
+  };
+  const moveJoystick = (clientX, clientY) => {
+    const rect = dom.mobileJoystick.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const dx = clientX - centerX;
+    const dy = clientY - centerY;
+    const radius = rect.width * 0.28;
+    const length = Math.min(radius, Math.hypot(dx, dy));
+    const angle = Math.atan2(dy, dx);
+    const knobX = Math.cos(angle) * length;
+    const knobY = Math.sin(angle) * length;
+    dom.mobileJoystickKnob.style.transform = `translate(calc(-50% + ${knobX}px), calc(-50% + ${knobY}px))`;
+    setAction("left", dx < -18, dx < -18);
+    setAction("right", dx > 18, dx > 18);
+    setAction("down", dy > 22, dy > 22);
+  };
+  dom.mobileJoystick.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
+    unlockAudio();
+    state.ui.joystickPointerId = event.pointerId;
+    moveJoystick(event.clientX, event.clientY);
+  });
+  dom.mobileJoystick.addEventListener("pointermove", (event) => {
+    if (state.ui.joystickPointerId !== event.pointerId) return;
+    event.preventDefault();
+    moveJoystick(event.clientX, event.clientY);
+  });
+  ["pointerup", "pointercancel", "pointerleave"].forEach((eventName) => {
+    dom.mobileJoystick.addEventListener(eventName, (event) => {
+      if (state.ui.joystickPointerId !== null && state.ui.joystickPointerId !== event.pointerId) return;
+      resetJoystick();
+    });
+  });
+  ["pointerup", "pointercancel"].forEach((eventName) => {
+    addEventListener(eventName, () => {
+      if (state.ui.joystickPointerId !== null) resetJoystick();
+    });
+  });
+  dom.mobileFullscreenButton.addEventListener("click", async () => {
+    try {
+      const target = dom.screens.game;
+      if (!document.fullscreenElement) {
+        if (target.requestFullscreen) await target.requestFullscreen();
+      } else if (document.exitFullscreen) {
+        await document.exitFullscreen();
+      }
+    } catch {}
+  });
 }
 
 function playerTemplate() {
