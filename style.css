@@ -1139,8 +1139,29 @@ body[data-style-mode="stylized"] #gameCanvas {
   }
 
   #resultPanel {
-    display: block;
+    position: fixed;
+    inset: 110px 16px auto 16px;
+    max-width: 420px;
+    margin: 0 auto;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 28;
+    pointer-events: auto;
+  }
+
+  #resultPanel.hidden {
+    display: none;
+  }
+
+  #gameScreen.result-active .mobile-controls,
+  #gameScreen.result-active .mobile-hud-bar,
+  #gameScreen.result-active .hud-row {
+    display: none !important;
+  }
+
+  #gameScreen.result-active .game-side {
     position: static;
+    width: 100%;
     pointer-events: auto;
   }
 

@@ -1013,6 +1013,7 @@ function startMission() {
   setMobilePanel("");
   state.game.startedAt = performance.now();
   state.logs = [];
+  dom.screens.game.classList.remove("result-active");
   dom.resultPanel.classList.add("hidden");
   dom.pauseModal.classList.add("hidden");
   showScreen("game");
@@ -1510,6 +1511,7 @@ function endMission(success) {
   state.profile.lastMap = state.selectedMap;
   saveProfile(true);
   renderMissionRewards(success, elapsed);
+  dom.screens.game.classList.add("result-active");
   dom.resultPanel.classList.remove("hidden");
   flash(dom.statusOverlay, success ? "Objective Complete" : "Systems Critical", 1200);
 }
